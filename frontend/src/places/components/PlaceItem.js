@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
+import Map from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal';
 import './PlaceItem.css';
 
-const PlaceItem = ({ image, title, address, description, id }) => {
+const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
   const [showMap, setShowMap] = useState(false);
 
   const toggleMap = () => setShowMap((prevState) => !prevState);
@@ -19,7 +20,7 @@ const PlaceItem = ({ image, title, address, description, id }) => {
         footerClass='place-item__modal-actions'
         footer={<Button onClick={toggleMap}>CLOSE</Button>}>
         <div className='map-container'>
-          <h2>THE MAP</h2>
+          <Map center={coordinates} zoom={16} />
         </div>
       </Modal>
 
@@ -35,7 +36,7 @@ const PlaceItem = ({ image, title, address, description, id }) => {
           </div>
           <div className='place-item__actions'>
             <Button inverse onClick={toggleMap}>
-              VIEW ON MAP
+              VIEW IN MAP
             </Button>
             <Button to={`/places/${id}`}>EDIT</Button>
             <Button danger>DELETE</Button>
