@@ -11,4 +11,8 @@
 
 ## Notes
 
+- Move overlay (e.g. SideDrawer.js) under <code>body</code> using <code>ReactDOM.createPortal(child, container)</code>
+
+![drawer-hook](screenshots/drawer-hook.png)
+
 &nbsp;
