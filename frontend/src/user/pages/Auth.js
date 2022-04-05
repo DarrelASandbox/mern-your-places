@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Button from '../../shared/components/FormElements/Button';
 import Input from '../../shared/components/FormElements/Input';
 import Card from '../../shared/components/UIElements/Card';
+import AuthContext from '../../shared/context/auth-context';
 import useForm from '../../shared/hooks/form-hook';
 import {
   VALIDATOR_EMAIL,
@@ -11,6 +12,8 @@ import {
 import './Auth.css';
 
 const Auth = () => {
+  const authContext = useContext(AuthContext);
+
   const [isLogin, setIsLogin] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
     // initialInputs
@@ -43,6 +46,7 @@ const Auth = () => {
   const loginSubmitHandler = (e) => {
     e.preventDefault();
     console.log(JSON.stringify(formState, null, 2));
+    authContext.loginHandler();
   };
 
   return (
@@ -83,10 +87,12 @@ const Auth = () => {
         <Button type='submit' disabled={!formState.isValid}>
           {isLogin ? 'LOGIN' : 'SIGNUP'}
         </Button>
-        <Button inverse onClick={isLoginHandler}>
-          {isLogin ? 'SIGNUP' : 'LOGIN'}
-        </Button>
       </form>
+      <Button inverse onClick={isLoginHandler}>
+        {isLogin
+          ? 'No account? Sign up now!'
+          : 'Already have an account? Login now!'}
+      </Button>
     </Card>
   );
 };
