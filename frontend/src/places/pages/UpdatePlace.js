@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Button from '../../shared/components/FormElements/Button';
 import Input from '../../shared/components/FormElements/Input';
@@ -39,24 +40,52 @@ const PLACES = [
 ];
 
 const UpdatePlace = () => {
-  const { placeId } = useParams();
-  const identifiedPlace = PLACES.find((place) => place.id === placeId);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [formState, inputHandler] = useForm(
+  const { placeId } = useParams();
+
+  // Fallback state for setFormData()
+  const [formState, inputHandler, setFormData] = useForm(
     // initialInputs
     {
       title: {
-        value: identifiedPlace.title,
-        isValid: true,
+        value: '',
+        isValid: false,
       },
       description: {
-        value: identifiedPlace.description,
-        isValid: true,
+        value: '',
+        isValid: false,
       },
     },
     // initialFormValidity
-    true
+    false
   );
+
+  const identifiedPlace = PLACES.find((place) => place.id === placeId);
+
+  useEffect(() => {
+    setFormData(
+      // inputData
+      {
+        title: {
+          value: identifiedPlace.title,
+          isValid: true,
+        },
+        description: {
+          value: identifiedPlace.description,
+          isValid: true,
+        },
+      },
+      // formValidity
+      true
+    );
+
+    setIsLoading(false);
+
+    // setFormData doesn't change because of useCallback() in form-hook.js
+    // identifiedPlace logic will run every re-render cycle but
+    // will always find the exact same object.
+  }, [setFormData, identifiedPlace]);
 
   const placeUpdateSubmitHandler = (e) => {
     e.preventDefault();
@@ -67,6 +96,17 @@ const UpdatePlace = () => {
     return (
       <div>
         <h2>Could not find place!</h2>
+      </div>
+    );
+  }
+
+  // Temporary workaround since existingValue & existingValidity
+  // only run once in Input.js initialFormState which uses
+  // fallback state values.
+  if (isLoading) {
+    return (
+      <div>
+        <h2>Loading...</h2>
       </div>
     );
   }
