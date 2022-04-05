@@ -8,6 +8,7 @@ import {
   VALIDATOR_REQUIRE,
 } from '../../shared/util/validators';
 import './PlaceForm.css';
+import Card from '../../shared/components/UIElements/Card';
 
 const PLACES = [
   {
@@ -64,21 +65,22 @@ const UpdatePlace = () => {
   const identifiedPlace = PLACES.find((place) => place.id === placeId);
 
   useEffect(() => {
-    setFormData(
-      // inputData
-      {
-        title: {
-          value: identifiedPlace.title,
-          isValid: true,
+    if (identifiedPlace)
+      setFormData(
+        // inputData
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true,
+          },
         },
-        description: {
-          value: identifiedPlace.description,
-          isValid: true,
-        },
-      },
-      // formValidity
-      true
-    );
+        // formValidity
+        true
+      );
 
     setIsLoading(false);
 
@@ -94,8 +96,10 @@ const UpdatePlace = () => {
 
   if (!identifiedPlace) {
     return (
-      <div>
-        <h2>Could not find place!</h2>
+      <div className='center'>
+        <Card>
+          <h2>Could not find place!</h2>
+        </Card>
       </div>
     );
   }
