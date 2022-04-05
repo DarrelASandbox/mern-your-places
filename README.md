@@ -48,3 +48,21 @@ useEffect(() => {
 - Important: The <code>useEffect()</code> logic re-runs <b>AFTER</b> the component (including its JSX code) was re-evaluated. That means, that the first execution of the <code>useEffect()</code> logic (when a component mounts for the first time) will <b>ALWAYS</b> happen <b>AFTER</b> the component rendered for the first time.
 
 &nbsp;
+
+---
+
+&nbsp;
+
+### Custom Hooks
+
+- You can build a hook that uses other built-in hooks (like <code>useState()</code>) and any component that uses your hook will then use the built-in hooks you might be using in your custom hook as well.
+
+- This allows you to build hooks like the <code>useForm()</code> hook we started to build in the previous lecture. The idea here is that we can share our stateful form logic (that uses <code>useReducer()</code> in our case) across components. This avoids code duplication, makes it easy to change the code and leads to more readable code.
+
+- With all that "custom hook" jargon, it's easy to overlook that custom hooks in the end are normal JavaScript functions though - never forget that!
+
+- If you use <code>useForm()</code> in your component function, it will get called for every re-evaluation of your component (i.e. for every re-render cycle). Hence all the logic in a custom hook runs every time your component function is executed.
+
+- Of course a lot of built-in hooks like <code>useState()</code> or <code>useReducer()</code> have mechanisms to ensure that state changes are kept across re-render cycles.
+
+&nbsp;

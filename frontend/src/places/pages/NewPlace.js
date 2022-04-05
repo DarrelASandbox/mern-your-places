@@ -1,71 +1,23 @@
-import { useCallback, useReducer } from 'react';
 import Button from '../../shared/components/FormElements/Button';
 import Input from '../../shared/components/FormElements/Input';
+import useForm from '../../shared/hooks/form-hook';
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from '../../shared/util/validators';
 import './PlaceForm.css';
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case 'INPUT_CHANGE':
-      let formIsValid = true;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId)
-          formIsValid = formIsValid && action.isValid;
-        else {
-          formIsValid = formIsValid && state.inputs[inputId].isValid;
-        }
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: { value: action.value, isValid: action.isValid },
-        },
-        isValid: formIsValid,
-      };
-
-    // For placeSubmitHandler()
-    // Able to clear state but not browser fields.
-    // Unnecessary as we will be redirected after submitting the form.
-    case 'INPUT_RESET':
-      for (const inputId in state.inputs) {
-        state.inputs[inputId].value = '';
-        state.inputs[inputId].isValid = false;
-        state.isValid = false;
-      }
-      return { ...state };
-
-    default:
-      return state;
-  }
-};
-
 const NewPlace = () => {
-  const initialFormState = {
-    inputs: {
+  const [formState, inputHandler] = useForm(
+    // initialInputs
+    {
       title: { value: '', isValid: false },
       description: { value: '', isValid: false },
       address: { value: '', isValid: false },
     },
 
-    isValid: false,
-  };
-
-  const [formState, dispatch] = useReducer(formReducer, initialFormState);
-
-  const inputHandler = useCallback(
-    (id, value, isValid) => {
-      dispatch({
-        type: 'INPUT_CHANGE',
-        value,
-        isValid,
-        inputId: id,
-      });
-    },
-    [dispatch]
+    // initialFormValidity
+    false
   );
 
   const placeSubmitHandler = (e) => {
@@ -93,7 +45,7 @@ const NewPlace = () => {
         id='description'
         element='textarea'
         label='Description'
-        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+        validators={[VALIDATOR_MINLENGTH(5)]}
         errorText='Please enter a minimun of 5 characters.'
         onInput={inputHandler}
       />
