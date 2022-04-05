@@ -7,8 +7,14 @@ import './PlaceItem.css';
 
 const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
   const [showMap, setShowMap] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const toggleMap = () => setShowMap((prevState) => !prevState);
+  const toggleDeleteModal = () => setShowDeleteModal((prevState) => !prevState);
+  const deleteHandler = () => {
+    toggleDeleteModal();
+    console.log('Deleting..');
+  };
 
   return (
     <>
@@ -22,6 +28,24 @@ const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
         <div className='map-container'>
           <Map center={coordinates} zoom={16} />
         </div>
+      </Modal>
+
+      <Modal
+        show={showDeleteModal}
+        onCancel={toggleDeleteModal}
+        header='Are you sure?'
+        footerClass='place-item__modal-actions'
+        footer={
+          <>
+            <Button inverse onClick={toggleDeleteModal}>
+              CANCEL
+            </Button>
+            <Button danger onClick={deleteHandler}>
+              DELETE
+            </Button>
+          </>
+        }>
+        <p>Delete action cannot be undone.</p>
       </Modal>
 
       <li className='place-item'>
@@ -39,7 +63,9 @@ const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
               VIEW IN MAP
             </Button>
             <Button to={`/places/${id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={toggleDeleteModal}>
+              DELETE
+            </Button>
           </div>
         </Card>
       </li>

@@ -13,6 +13,7 @@ const ModalOverlay = ({
   contentClass,
   children,
   footerClass,
+  footer,
   nodeRef,
 }) => {
   const content = (
@@ -23,7 +24,7 @@ const ModalOverlay = ({
 
       <form onSubmit={onSubmit ? onSubmit : (event) => event.preventDefault()}>
         <div className={`modal__content ${contentClass}`}>{children}</div>
-        <footer className={`modal__footer ${footerClass}`}></footer>
+        <footer className={`modal__footer ${footerClass}`}>{footer}</footer>
       </form>
     </div>
   );
