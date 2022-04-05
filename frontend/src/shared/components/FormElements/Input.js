@@ -1,4 +1,4 @@
-import { useReducer, useEffect, forwardRef } from 'react';
+import { useReducer, useEffect } from 'react';
 import { validate } from '../../util/validators';
 import './Input.css';
 
@@ -17,18 +17,9 @@ const inputReducer = (state, action) => {
         isValid: validate(action.value, action.validators),
       };
 
-    case 'RESET':
-      return { ...initialFormState };
-
     default:
       return state;
   }
-};
-
-const initialFormState = {
-  value: '',
-  isTouched: false,
-  isValid: false,
 };
 
 const Input = ({
@@ -41,7 +32,15 @@ const Input = ({
   errorText,
   validators,
   onInput,
+  existingValue,
+  existingValidity,
 }) => {
+  const initialFormState = {
+    value: existingValue || '',
+    isTouched: false,
+    isValid: existingValidity || false,
+  };
+
   const [inputState, dispatch] = useReducer(inputReducer, initialFormState);
 
   const { value, isValid } = inputState;
