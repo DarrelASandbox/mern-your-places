@@ -7,7 +7,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, minlength: 5 },
   avatar: { type: String, required: true },
-  places: { type: String, required: true },
+  places: [{ type: mongoose.Types.ObjectId, ref: 'Place', required: true }],
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -18,7 +18,7 @@ const createUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return next(new HttpError('Invalid input', 422));
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
   if (await User.findOne({ email }))
     return next(new HttpError('Email already exists.', 422));
 
@@ -28,7 +28,7 @@ const createUser = async (req, res, next) => {
     avatar:
       'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
     password,
-    places,
+    places: [],
   });
 
   try {

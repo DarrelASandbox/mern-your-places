@@ -1,11 +1,10 @@
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
-const crypto = require('crypto');
 
 const HttpError = require('../models/http-error');
-const getCoordsFromAddress = require('../util/location');
 const Place = require('../models/place');
-
-const generateId = () => crypto.randomBytes(10).toString('hex');
+const User = require('../models/user');
+const getCoordsFromAddress = require('../util/location');
 
 const getPlaceById = async (req, res, next) => {
   let place;
@@ -57,8 +56,22 @@ const createPlace = async (req, res, next) => {
     creator,
   });
 
+  let user;
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
+  } catch (err) {
+    return next(new HttpError('Failed to create.', 500));
+  }
+
+  if (!user) return next(new HttpError('Something went wrong!', 404));
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await createdPlace.save({ session });
+    user.places.push(createdPlace);
+    await user.save({ session });
+    await session.commitTransaction();
     res.status(201).json({ createdPlace });
   } catch (error) {
     console.log(error);
