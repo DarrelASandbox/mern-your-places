@@ -10,11 +10,15 @@ import {
   VALIDATOR_REQUIRE,
 } from '../../shared/util/validators';
 import './Auth.css';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 const Auth = () => {
   const authContext = useContext(AuthContext);
 
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const [formState, inputHandler, setFormData] = useForm(
     // initialInputs
     {
@@ -28,6 +32,7 @@ const Auth = () => {
 
   const isLoginHandler = () => {
     if (!isLogin) {
+      setIsLoading(true);
       delete formState.inputs.name;
       setFormData(
         { ...formState.inputs },
@@ -43,57 +48,82 @@ const Auth = () => {
     setIsLogin((prevState) => !prevState);
   };
 
-  const loginSubmitHandler = (e) => {
+  const loginSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(formState, null, 2));
-    authContext.loginHandler();
+    setIsLoading(true);
+    const route = isLogin ? 'login' : 'signup';
+
+    try {
+      const response = await fetch(`http://localhost:4000/api/users/${route}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formState.inputs.name ? formState.inputs.name.value : '',
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      setIsLoading(false);
+      authContext.loginHandler();
+    } catch (error) {
+      setIsLoading(false);
+      setError(error.message || 'Something went wrong!');
+    }
   };
 
   return (
-    <Card className='authentication'>
-      {isLogin ? <h2>Login</h2> : <h2>Sign Up</h2>}
-      <hr />
-      <form onSubmit={loginSubmitHandler}>
-        {!isLogin && (
+    <>
+      <ErrorModal error={error} onClear={() => setError(null)} />
+      <Card className='authentication'>
+        {isLoading && <LoadingSpinner asOverlay />}
+        {isLogin ? <h2>Login</h2> : <h2>Sign Up</h2>}
+        <hr />
+        <form onSubmit={loginSubmitHandler}>
+          {!isLogin && (
+            <Input
+              id='name'
+              element='input'
+              type='text'
+              label='Name'
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText='Please enter a name.'
+              onInput={inputHandler}
+            />
+          )}
           <Input
-            id='name'
+            id='email'
             element='input'
             type='text'
-            label='Name'
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText='Please enter a name.'
+            label='Email'
+            validators={[VALIDATOR_EMAIL()]}
+            errorText='Please enter a valid email.'
             onInput={inputHandler}
           />
-        )}
-        <Input
-          id='email'
-          element='input'
-          type='text'
-          label='Email'
-          validators={[VALIDATOR_EMAIL()]}
-          errorText='Please enter a valid email.'
-          onInput={inputHandler}
-        />
-        <Input
-          id='password'
-          element='input'
-          type='password'
-          label='Password'
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText='Please enter a minimun of 5 characters.'
-          onInput={inputHandler}
-        />
+          <Input
+            id='password'
+            element='input'
+            type='password'
+            label='Password'
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText='Please enter a minimun of 5 characters.'
+            onInput={inputHandler}
+          />
 
-        <Button type='submit' disabled={!formState.isValid}>
-          {isLogin ? 'LOGIN' : 'SIGNUP'}
+          <Button type='submit' disabled={!formState.isValid}>
+            {isLogin ? 'LOGIN' : 'SIGNUP'}
+          </Button>
+        </form>
+        <Button inverse onClick={isLoginHandler}>
+          {isLogin
+            ? 'No account? Sign up now!'
+            : 'Already have an account? Login now!'}
         </Button>
-      </form>
-      <Button inverse onClick={isLoginHandler}>
-        {isLogin
-          ? 'No account? Sign up now!'
-          : 'Already have an account? Login now!'}
-      </Button>
-    </Card>
+      </Card>
+    </>
   );
 };
 export default Auth;
