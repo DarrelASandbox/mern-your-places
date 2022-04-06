@@ -1,49 +1,57 @@
 const { validationResult } = require('express-validator');
-const crypto = require('crypto');
 
 const HttpError = require('../models/http-error');
+const User = require('../models/user');
 
-const USERS = [
-  {
-    id: 'u0',
-    name: 'Mong Mong',
-    email: 'mongmong@mongmail.com',
-    password: 'passw0rd',
-  },
-  {
-    id: 'u9999',
-    name: 'Mong Dong',
-    email: 'mongdong@mongmail.com',
-    password: 'passw0rd',
-  },
-];
-
-const generateId = () => crypto.randomBytes(10).toString('hex');
-const getAllUsers = (req, res, next) => res.json({ users: USERS });
-
-const createUser = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) throw new HttpError('Invalid input', 422);
-
-  const { name, email, password } = req.body;
-  const user = USERS.filter((user) => user.email === email);
-  if (user.length !== 0) throw new HttpError('Email already exists.', 422);
-
-  const createdUser = {
-    id: generateId(),
-    name,
-    email,
-    password,
-  };
-  USERS.push(createdUser);
-  res.status(201).json({ user: createdUser });
+const getAllUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, '-password');
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError('Something went wrong!', 404));
+  }
+  res.json({ users });
 };
 
-const loginUser = (req, res, next) => {
+const createUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return next(new HttpError('Invalid input', 422));
+
+  const { name, email, password, places } = req.body;
+  if (await User.findOne({ email }))
+    return next(new HttpError('Email already exists.', 422));
+
+  const createdUser = new User({
+    name,
+    email,
+    avatar:
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+    password,
+    places,
+  });
+
+  try {
+    await createdUser.save();
+    res.status(201).json({ user: createdUser });
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError('Failed to create.', 500));
+  }
+};
+
+const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-  const user = USERS.filter((user) => user.email === email);
-  if (user.length === 0 || user[0].password !== password)
-    throw new HttpError('Invalid credentials.', 401);
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+    if (!existingUser || existingUser.password !== password)
+      return next(new HttpError('Invalid credentials.', 401));
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError('Something went wrong!', 404));
+  }
 
   res.json({ message: 'Logging in...' });
 };
