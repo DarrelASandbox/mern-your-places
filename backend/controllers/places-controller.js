@@ -72,6 +72,7 @@ const createPlace = async (req, res, next) => {
     user.places.push(createdPlace);
     await user.save({ session });
     await session.commitTransaction();
+
     res.status(201).json({ createdPlace });
   } catch (error) {
     console.log(error);
@@ -100,8 +101,19 @@ const updatePlace = async (req, res, next) => {
 
 const deletePlace = async (req, res, next) => {
   try {
-    const place = await Place.findById(req.params.id);
+    const place = await Place.findById(req.params.id).populate(
+      'creator',
+      '-password'
+    );
     if (place.length === 0) return next();
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await place.remove({ session });
+    place.creator.places.pull(place);
+    await place.creator.save({ session });
+    await session.commitTransaction();
+
     res.status(200).json({ message: 'Place is deleted.' });
     await place.remove();
   } catch (error) {

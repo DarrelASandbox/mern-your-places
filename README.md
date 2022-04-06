@@ -121,6 +121,44 @@ useEffect(() => {
 
 ### Transactions
 
--[mongoose transactions](https://mongoosejs.com/docs/transactions.html)
+- [mongoose transactions](https://mongoosejs.com/docs/transactions.html)
+
+> <b>Artur: </b>Potential security leak with populate()
+
+> Bare in mind that if you use populate() the referenced object is inserted as-is. Thus, if we return the delete place to the frontend (for a notification for example), the creator is exported in the JSON as well. Together with the password of course.
+
+> <b>Adam: </b>You can specify the fields you want to exclude from .populate() as its second parameter:
+
+```js
+.populate('something', '-field1 -field2')
+```
+
+&nbsp;
+
+---
+
+&nbsp;
+
+> <b>Guilherme: </b>For which reason a session has to be started?
+
+> <b>Jost: </b>In general (not specific to MongoDB), if you have multiple database accesses, it is safer to do this in a transaction. In this way the related parts are prevented from being modified by another user, until the transaction is finished.
+
+> A simple real world example would be that two persons want to take out money from the same account, using two different cash machines. Without blocking the access until the first person has finished the whole transaction, it might happen that both get the same account status of 100$ displayed in the beginning, and then both draw 100$ from this account without being aware of the fact that the account is in the red in the end.
+
+> <b>BTW:</b> Remember that the problem arises since the database access is asynchronous. For the same reason we don't need transactions for accessing the browser's localStorage (synchronous), but we need transactions for accessing the browser's IndexedDB (asynchronous).
+
+&nbsp;
+
+---
+
+&nbsp;
+
+> <b>Artur: </b>Do we need session.endSession()?
+
+> <b>Adam: </b>Nope, sessions are also closed during garbage collection so it doesn't need to be called.
+
+&nbsp;
+
+---
 
 &nbsp;
