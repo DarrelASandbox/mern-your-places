@@ -66,3 +66,9 @@ useEffect(() => {
 - Of course a lot of built-in hooks like <code>useState()</code> or <code>useReducer()</code> have mechanisms to ensure that state changes are kept across re-render cycles.
 
 &nbsp;
+
+### Custom Error
+
+- [MDN - Custom Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types)
+
+&nbsp;
