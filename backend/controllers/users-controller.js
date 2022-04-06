@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const crypto = require('crypto');
 
 const HttpError = require('../models/http-error');
@@ -21,6 +22,9 @@ const generateId = () => crypto.randomBytes(10).toString('hex');
 const getAllUsers = (req, res, next) => res.json({ users: USERS });
 
 const createUser = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) throw new HttpError('Invalid input', 422);
+
   const { name, email, password } = req.body;
   const user = USERS.filter((user) => user.email === email);
   if (user.length !== 0) throw new HttpError('Email already exists.', 422);

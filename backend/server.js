@@ -7,6 +7,8 @@ const usersRoutes = require('./routes/users-routes');
 const app = express();
 const port = process.env.PORT || 4000;
 
+require('dotenv').config();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -1,6 +1,8 @@
+const { validationResult } = require('express-validator');
 const crypto = require('crypto');
 
 const HttpError = require('../models/http-error');
+const getCoordsFromAddress = require('../util/location');
 
 let PLACES = [
   {
@@ -47,8 +49,19 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ userPlaces });
 };
 
-const createPlace = (req, res, next) => {
-  const { title, description, coordinates, address, creator } = req.body;
+const createPlace = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return next(new HttpError('Invalid input', 422));
+
+  const { title, description, address, creator } = req.body;
+
+  let coordinates;
+  try {
+    coordinates = await getCoordsFromAddress(address);
+  } catch (error) {
+    return next(error);
+  }
+
   const createdPlace = {
     id: generateId(),
     title,
@@ -62,6 +75,9 @@ const createPlace = (req, res, next) => {
 };
 
 const updatePlace = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) throw new HttpError('Invalid input', 422);
+
   const { title, description } = req.body;
   const updatePlaceIndex = PLACES.findIndex(
     (place) => place.id === req.params.id
@@ -73,12 +89,15 @@ const updatePlace = (req, res, next) => {
 
   updatePlace[0].title = title;
   updatePlace[0].description = description;
-  PLACES[updatePlaceIndex] = updatePlace;
+  PLACES[updatePlaceIndex] = updatePlace[0];
 
-  res.status(200).json({ place: updatePlace });
+  res.status(200).json({ place: updatePlace[0] });
 };
 
 const deletePlace = (req, res, next) => {
+  if (PLACES.filter((place) => place.id === req.params.id))
+    throw new HttpError('No place found.');
+
   PLACES = PLACES.filter((place) => place.id !== req.params.id);
   res.status(200).json({ message: 'Place is deleted.' });
 };

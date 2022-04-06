@@ -70,5 +70,6 @@ useEffect(() => {
 ### Custom Error
 
 - [MDN - Custom Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types)
+- [SO - How to reject in async/await syntax?](https://stackoverflow.com/questions/42453683/how-to-reject-in-async-await-syntax)
 
 &nbsp;
