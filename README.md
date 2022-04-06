@@ -87,6 +87,16 @@ useEffect(() => {
 
 &nbsp;
 
+> <b>Elson:</b> Difference between Throw error and returning next(error)
+
+> <b>Maximilian:</b> Yes, absolutely - and we do highlight that in the course. In an async task (e.g. in a promise), you need to use next(error) - throw error will NOT cause the error handling middleware to become active.
+
+&nbsp;
+
+---
+
+&nbsp;
+
 ### NOSQL VS SQL
 
 |                  NOSQL                   |                      SQL                      |
@@ -96,5 +106,15 @@ useEffect(() => {
 |        Less Focused on Relations         |         RElations are a Core Feature          |
 |         "Independent Documents"          |              Records are Related              |
 | Great for: Logs, Orders, (Chat) Messages | Great for: Shopping Carts, Contacts, Networks |
+
+&nbsp;
+
+> <b>James: </b>Bcrypt vs Crypto
+
+> <b>Adam: </b>The native crypto module is too fast at creating its hashes so it's not something you want to use for hashing passwords. You want something on the slower end like bcrypt or agron2 to help mitigate brute force attacks.
+
+&nbsp;
+
+---
 
 &nbsp;
