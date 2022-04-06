@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const HttpError = require('./models/http-error');
 const placesRoutes = require('./routes/places-routes');
@@ -25,4 +26,11 @@ app.use((err, req, res, next) => {
     .json({ message: err.message || 'Something went wrong!' });
 });
 
-app.listen(port, () => console.log(`YourPlace app listening on port ${port}`));
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() =>
+    app.listen(port, () =>
+      console.log(`YourPlace app listening on port ${port}`)
+    )
+  )
+  .catch((err) => console.log(err));

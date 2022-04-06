@@ -3,6 +3,7 @@ const crypto = require('crypto');
 
 const HttpError = require('../models/http-error');
 const getCoordsFromAddress = require('../util/location');
+const Place = require('../models/place');
 
 let PLACES = [
   {
@@ -62,16 +63,25 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: generateId(),
+  const createdPlace = new Place({
     title,
     description,
     location: coordinates,
+    image:
+      'https://images.unsplash.com/photo-1583068433548-98aeb322f1d5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
     address,
     creator,
-  };
-  PLACES.push(createdPlace);
-  res.status(201).json({ createdPlace });
+  });
+
+  try {
+    await createdPlace.save();
+
+    res.status(201).json({ createdPlace });
+  } catch (error) {
+    console.log(error);
+    const httpError = new HttpError('Failed to create.', 500);
+    return next(httpError);
+  }
 };
 
 const updatePlace = (req, res, next) => {

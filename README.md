@@ -9,6 +9,19 @@
 
 &nbsp;
 
+## Installation
+
+1. Install NPM packages.
+
+```sh
+npm install
+```
+
+2. Rename <code>.env.temp</code> to <code>.env</code>
+3. Fill in the respective fields in the .env files (frontend & backend)
+
+&nbsp;
+
 ## Notes
 
 ### ReactDOM.createPortal(child, container)
@@ -71,5 +84,17 @@ useEffect(() => {
 
 - [MDN - Custom Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types)
 - [SO - How to reject in async/await syntax?](https://stackoverflow.com/questions/42453683/how-to-reject-in-async-await-syntax)
+
+&nbsp;
+
+### NOSQL VS SQL
+
+|                  NOSQL                   |                      SQL                      |
+| :--------------------------------------: | :-------------------------------------------: |
+|             MongoDB, CouchDB             |                 MySQL, MS SQL                 |
+|         Enforces no Data Schema          |         Enforces a Strict Data Schema         |
+|        Less Focused on Relations         |         RElations are a Core Feature          |
+|         "Independent Documents"          |              Records are Related              |
+| Great for: Logs, Orders, (Chat) Messages | Great for: Shopping Carts, Contacts, Networks |
 
 &nbsp;
