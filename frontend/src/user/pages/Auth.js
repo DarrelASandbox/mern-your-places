@@ -53,7 +53,7 @@ const Auth = () => {
 
     const route = isLogin ? 'login' : 'signup';
 
-    await sendRequest(
+    const response = await sendRequest(
       `/api/users/${route}`,
       'POST',
       { 'Content-Type': 'application/json' },
@@ -64,7 +64,7 @@ const Auth = () => {
       })
     );
 
-    authContext.loginHandler();
+    authContext.loginHandler(response.existingUser._id);
   };
 
   return (

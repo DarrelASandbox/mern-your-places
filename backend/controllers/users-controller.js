@@ -53,7 +53,7 @@ const loginUser = async (req, res, next) => {
     return next(new HttpError('Something went wrong!', 404));
   }
 
-  res.json({ message: 'Logging in...' });
+  res.json({ message: 'Logging in...', existingUser });
 };
 
 module.exports = { getAllUsers, loginUser, createUser };

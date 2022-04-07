@@ -17,11 +17,11 @@ const PlaceList = ({ items }) => {
   return (
     <ul className='place-list'>
       {items.map(
-        ({ id, imageURL, title, description, address, creator, location }) => (
+        ({ _id, image, title, description, address, creator, location }) => (
           <PlaceItem
-            key={id}
-            id={id}
-            image={imageURL}
+            key={_id}
+            id={_id}
+            image={image}
             title={title}
             description={description}
             address={address}

@@ -7,10 +7,14 @@ import { Auth, Users } from './user/pages/';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const loginHandler = useCallback(
-    () => setIsLoggedIn((prevState) => !prevState),
-    []
+    (uid) => {
+      setIsLoggedIn((prevState) => !prevState);
+      !userId ? setUserId(uid) : setUserId(null);
+    },
+    [userId]
   );
 
   // It's better to use <Navigate to="/" replace />,
@@ -39,7 +43,7 @@ const App = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, loginHandler }}>
+    <AuthContext.Provider value={{ isLoggedIn, userId, loginHandler }}>
       <div>
         <BrowserRouter>
           <main>
