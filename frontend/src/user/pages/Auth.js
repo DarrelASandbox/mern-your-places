@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import Input from '../../shared/components/FormElements/Input';
 import Card from '../../shared/components/UIElements/Card';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
@@ -25,6 +26,7 @@ const Auth = () => {
     {
       email: { value: '', isValid: false },
       password: { value: '', isValid: false },
+      image: { value: null, isValid: false },
     },
 
     // initialFormValidity
@@ -34,13 +36,18 @@ const Auth = () => {
   const isLoginHandler = () => {
     if (!isLogin) {
       delete formState.inputs.name;
+      delete formState.inputs.image;
       setFormData(
         { ...formState.inputs },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       setFormData(
-        { ...formState.inputs, name: { value: '', isValid: false } },
+        {
+          ...formState.inputs,
+          name: { value: '', isValid: false },
+          image: { value: null, isValid: false },
+        },
         false
       );
     }
@@ -50,6 +57,8 @@ const Auth = () => {
 
   const loginSubmitHandler = async (e) => {
     e.preventDefault();
+
+    console.log(formState.inputs);
 
     const route = isLogin ? 'login' : 'signup';
 
@@ -86,6 +95,8 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
+          {!isLogin && <ImageUpload id='image' onInput={inputHandler} />}
+
           <Input
             id='email'
             element='input'
