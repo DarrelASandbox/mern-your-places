@@ -58,19 +58,18 @@ const Auth = () => {
   const loginSubmitHandler = async (e) => {
     e.preventDefault();
 
-    console.log(formState.inputs);
+    const formData = new FormData();
+    formData.append('name', formState.inputs.name.value);
+    formData.append('email', formState.inputs.email.value);
+    formData.append('password', formState.inputs.password.value);
+    formData.append('image', formState.inputs.image.value);
 
     const route = isLogin ? 'login' : 'signup';
-
     const response = await sendRequest(
       `/api/users/${route}`,
       'POST',
-      { 'Content-Type': 'application/json' },
-      JSON.stringify({
-        name: formState.inputs.name ? formState.inputs.name.value : '',
-        email: formState.inputs.email.value,
-        password: formState.inputs.password.value,
-      })
+      {},
+      formData
     );
 
     authContext.loginHandler(response.existingUser._id);

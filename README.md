@@ -169,3 +169,11 @@ useEffect(() => {
 - [Jost (stackblitz): react-prevent-unmounted-component-error](https://stackblitz.com/edit/react-prevent-unmounted-component-error?file=Functional.js)
 
 &nbsp;
+
+### Image File Upload
+
+- [MDN - FileSystem API](https://developer.mozilla.org/en-US/docs/Web/API/FileSystem)
+- [MDN - URL API (URL.createObjectURL())](https://developer.mozilla.org/en-US/docs/Web/API/URL)
+- [MDN - FormData API](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
+
+&nbsp;
