@@ -26,7 +26,6 @@ const Auth = () => {
     {
       email: { value: '', isValid: false },
       password: { value: '', isValid: false },
-      image: { value: null, isValid: false },
     },
 
     // initialFormValidity
@@ -58,21 +57,33 @@ const Auth = () => {
   const loginSubmitHandler = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('name', formState.inputs.name.value);
-    formData.append('email', formState.inputs.email.value);
-    formData.append('password', formState.inputs.password.value);
-    formData.append('image', formState.inputs.image.value);
+    if (isLogin) {
+      const response = await sendRequest(
+        '/api/users/login',
+        'POST',
+        { 'Content-Type': 'application/json' },
+        JSON.stringify({
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        })
+      );
 
-    const route = isLogin ? 'login' : 'signup';
-    const response = await sendRequest(
-      `/api/users/${route}`,
-      'POST',
-      {},
-      formData
-    );
+      authContext.loginHandler(response.existingUser._id);
+    } else {
+      const formData = new FormData();
+      formData.append('email', formState.inputs.email.value);
+      formData.append('name', formState.inputs.name.value);
+      formData.append('password', formState.inputs.password.value);
+      formData.append('image', formState.inputs.image.value);
+      const response = await sendRequest(
+        '/api/users/signup',
+        'POST',
+        {},
+        formData
+      );
 
-    authContext.loginHandler(response.existingUser._id);
+      authContext.loginHandler(response.createdUser._id);
+    }
   };
 
   return (

@@ -33,7 +33,7 @@ const createUser = async (req, res, next) => {
 
   try {
     await createdUser.save();
-    res.status(201).json({ user: createdUser });
+    res.status(201).json({ createdUser });
   } catch (error) {
     console.log(error);
     return next(new HttpError('Failed to create.', 500));
@@ -42,7 +42,7 @@ const createUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-
+  console.log(req.body);
   let existingUser;
   try {
     existingUser = await User.findOne({ email });

@@ -9,7 +9,6 @@ const useHttpClient = () => {
   const sendRequest = useCallback(
     async (url, method = 'GET', headers = {}, body = null) => {
       setIsLoading(true);
-
       // Avoid setting state on an unmounted component
       const httpAbortController = new AbortController();
       activeHttpRequests.current.push(httpAbortController);
@@ -17,8 +16,8 @@ const useHttpClient = () => {
       try {
         const response = await fetch(url, {
           method,
-          body,
           headers,
+          body,
           signal: httpAbortController.signal,
         });
 
