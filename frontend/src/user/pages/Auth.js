@@ -6,6 +6,7 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import AuthContext from '../../shared/context/auth-context';
 import useForm from '../../shared/hooks/form-hook';
+import useHttpClient from '../../shared/hooks/http-hook';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -17,8 +18,8 @@ const Auth = () => {
   const authContext = useContext(AuthContext);
 
   const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [formState, inputHandler, setFormData] = useForm(
     // initialInputs
     {
@@ -32,7 +33,6 @@ const Auth = () => {
 
   const isLoginHandler = () => {
     if (!isLogin) {
-      setIsLoading(true);
       delete formState.inputs.name;
       setFormData(
         { ...formState.inputs },
@@ -50,34 +50,26 @@ const Auth = () => {
 
   const loginSubmitHandler = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+
     const route = isLogin ? 'login' : 'signup';
 
-    try {
-      const response = await fetch(`/api/users/${route}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formState.inputs.name ? formState.inputs.name.value : '',
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        }),
-      });
+    await sendRequest(
+      `/api/users/${route}`,
+      'POST',
+      { 'Content-Type': 'application/json' },
+      JSON.stringify({
+        name: formState.inputs.name ? formState.inputs.name.value : '',
+        email: formState.inputs.email.value,
+        password: formState.inputs.password.value,
+      })
+    );
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
-      setIsLoading(false);
-      authContext.loginHandler();
-    } catch (error) {
-      setIsLoading(false);
-      setError(error.message || 'Something went wrong!');
-    }
+    authContext.loginHandler();
   };
 
   return (
     <>
-      <ErrorModal error={error} onClear={() => setError(null)} />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className='authentication'>
         {isLoading && <LoadingSpinner asOverlay />}
         {isLogin ? <h2>Login</h2> : <h2>Sign Up</h2>}

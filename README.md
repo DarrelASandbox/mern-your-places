@@ -162,3 +162,10 @@ useEffect(() => {
 ---
 
 &nbsp;
+
+### Avoid setting state on an unmounted component
+
+- [MDN - AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
+- [Jost (stackblitz): react-prevent-unmounted-component-error](https://stackblitz.com/edit/react-prevent-unmounted-component-error?file=Functional.js)
+
+&nbsp;

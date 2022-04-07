@@ -2,8 +2,8 @@ import Card from '../../shared/components/UIElements/Card';
 import UserItem from './UserItem';
 import './UsersList.css';
 
-const UsersList = (props) => {
-  if (props.items.length === 0)
+const UsersList = ({ items }) => {
+  if (items.length === 0)
     return (
       <div className='center'>
         <Card>
@@ -14,7 +14,7 @@ const UsersList = (props) => {
 
   return (
     <ul className='users-list'>
-      {props.items.map(({ _id, avatar, name, places }) => (
+      {items.map(({ _id, avatar, name, places }) => (
         <UserItem
           key={_id}
           id={_id}
@@ -26,4 +26,5 @@ const UsersList = (props) => {
     </ul>
   );
 };
+
 export default UsersList;
