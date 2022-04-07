@@ -17,8 +17,9 @@ const PlaceItem = ({
   id,
   coordinates,
   onDelete,
+  creator,
 }) => {
-  const authContext = useContext(AuthContext);
+  const { userId } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [showMap, setShowMap] = useState(false);
@@ -80,10 +81,8 @@ const PlaceItem = ({
             <Button inverse onClick={toggleMap}>
               VIEW IN MAP
             </Button>
-            {authContext.isLoggedIn && (
-              <Button to={`/places/${id}`}>EDIT</Button>
-            )}
-            {authContext.isLoggedIn && (
+            {userId === creator && <Button to={`/places/${id}`}>EDIT</Button>}
+            {userId === creator && (
               <Button danger onClick={toggleDeleteModal}>
                 DELETE
               </Button>

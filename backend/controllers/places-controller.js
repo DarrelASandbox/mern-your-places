@@ -22,10 +22,6 @@ const getPlaceById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   try {
     const userPlaces = await Place.find({ creator: req.params.id });
-    if (userPlaces.length === 0)
-      return next(
-        new HttpError('No places found with the given user id.', 404)
-      );
     res.json({ userPlaces });
   } catch (error) {
     console.log(error);
@@ -100,6 +96,8 @@ const updatePlace = async (req, res, next) => {
 };
 
 const deletePlace = async (req, res, next) => {
+  // @TODO: Prevent other user from deleting places not belonging to them.
+
   try {
     const place = await Place.findById(req.params.id).populate(
       'creator',
