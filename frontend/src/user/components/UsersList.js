@@ -14,13 +14,13 @@ const UsersList = (props) => {
 
   return (
     <ul className='users-list'>
-      {props.items.map(({ id, image, name, places }) => (
+      {props.items.map(({ _id, avatar, name, places }) => (
         <UserItem
-          key={id}
-          id={id}
-          image={image}
+          key={_id}
+          id={_id}
+          image={avatar}
           name={name}
-          placeCount={places}
+          placeCount={places.length}
         />
       ))}
     </ul>
