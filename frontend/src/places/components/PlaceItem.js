@@ -5,22 +5,36 @@ import Map from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal';
 import './PlaceItem.css';
 import AuthContext from '../../shared/context/auth-context';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import useHttpClient from '../../shared/hooks/http-hook';
 
-const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
+const PlaceItem = ({
+  image,
+  title,
+  address,
+  description,
+  id,
+  coordinates,
+  onDelete,
+}) => {
   const authContext = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [showMap, setShowMap] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const toggleMap = () => setShowMap((prevState) => !prevState);
   const toggleDeleteModal = () => setShowDeleteModal((prevState) => !prevState);
-  const deleteHandler = () => {
+  const deleteHandler = async () => {
     toggleDeleteModal();
-    console.log('Deleting..');
+    await sendRequest(`/api/places/${id}`, 'DELETE');
+    onDelete(id);
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={showMap}
         onCancel={toggleMap}
@@ -53,6 +67,7 @@ const PlaceItem = ({ image, title, address, description, id, coordinates }) => {
 
       <li className='place-item'>
         <Card className='place-item__content'>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className='place-item__image'>
             <img src={image} alt={title} />
           </div>

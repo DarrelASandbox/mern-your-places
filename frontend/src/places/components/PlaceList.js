@@ -3,7 +3,7 @@ import PlaceItem from './PlaceItem';
 import './PlaceList.css';
 import Button from '../../shared/components/FormElements/Button';
 
-const PlaceList = ({ items }) => {
+const PlaceList = ({ items, onDeletePlace }) => {
   if (items.length === 0)
     return (
       <div className='place-list center'>
@@ -27,6 +27,7 @@ const PlaceList = ({ items }) => {
             address={address}
             creator={creator}
             coordinates={location}
+            onDelete={onDeletePlace}
           />
         )
       )}

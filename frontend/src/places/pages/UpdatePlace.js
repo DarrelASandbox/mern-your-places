@@ -1,100 +1,98 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../shared/components/FormElements/Button';
 import Input from '../../shared/components/FormElements/Input';
+import Card from '../../shared/components/UIElements/Card';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import AuthContext from '../../shared/context/auth-context';
 import useForm from '../../shared/hooks/form-hook';
+import useHttpClient from '../../shared/hooks/http-hook';
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from '../../shared/util/validators';
 import './PlaceForm.css';
-import Card from '../../shared/components/UIElements/Card';
 
-const PLACES = [
-  {
-    id: 'p1',
-    title: 'Pentagon',
-    description:
-      'The Pentagon is the headquarters building of the Shape of Solitude. ',
-    imageURL:
-      'https://images.unsplash.com/photo-1615692885947-94d720250cf0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
-    address: 'Alberta T0K 2M0, Canada',
-    location: {
-      lat: 49.0011354,
-      lng: -113.8429555,
-    },
-    creator: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Hexagon',
-    description: 'The Hexagon is the Cookhouse of the Shape of Solitude. ',
-    imageURL:
-      'https://images.unsplash.com/photo-1600331574095-4a20d3d8dd77?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
-    address: 'Alberta T0K 2M0, Canada',
-    location: {
-      lat: 49.0011354,
-      lng: -113.8429555,
-    },
-    creator: 'u2',
-  },
-];
+// const PLACES = [
+//   {
+//     id: 'p1',
+//     title: 'Pentagon',
+//     description:
+//       'The Pentagon is the headquarters building of the Shape of Solitude. ',
+//     imageURL:
+//       'https://images.unsplash.com/photo-1615692885947-94d720250cf0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
+//     address: 'Alberta T0K 2M0, Canada',
+//     location: {
+//       lat: 49.0011354,
+//       lng: -113.8429555,
+//     },
+//     creator: 'u1',
+//   },
+//   {
+//     id: 'p2',
+//     title: 'Hexagon',
+//     description: 'The Hexagon is the Cookhouse of the Shape of Solitude. ',
+//     imageURL:
+//       'https://images.unsplash.com/photo-1600331574095-4a20d3d8dd77?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
+//     address: 'Alberta T0K 2M0, Canada',
+//     location: {
+//       lat: 49.0011354,
+//       lng: -113.8429555,
+//     },
+//     creator: 'u2',
+//   },
+// ];
 
 const UpdatePlace = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const { userId } = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedPlace, setLoadedPlace] = useState();
 
   const { placeId } = useParams();
+  const navigate = useNavigate();
 
-  // Fallback state for setFormData()
-  const [formState, inputHandler, setFormData] = useForm(
-    // initialInputs
+  const [formState, inputHandler] = useForm(
     {
-      title: {
-        value: '',
-        isValid: false,
-      },
-      description: {
-        value: '',
-        isValid: false,
-      },
+      title: { value: '', isValid: false },
+      description: { value: '', isValid: false },
     },
-    // initialFormValidity
     false
   );
 
-  const identifiedPlace = PLACES.find((place) => place.id === placeId);
-
   useEffect(() => {
-    if (identifiedPlace)
-      setFormData(
-        // inputData
-        {
-          title: {
-            value: identifiedPlace.title,
-            isValid: true,
-          },
-          description: {
-            value: identifiedPlace.description,
-            isValid: true,
-          },
-        },
-        // formValidity
-        true
-      );
+    const callSendRequest = async () => {
+      const response = await sendRequest(`/api/places/${placeId}`);
+      setLoadedPlace(response.place);
+    };
 
-    setIsLoading(false);
+    callSendRequest();
+  }, [sendRequest, placeId]);
 
-    // setFormData doesn't change because of useCallback() in form-hook.js
-    // identifiedPlace logic will run every re-render cycle but
-    // will always find the exact same object.
-  }, [setFormData, identifiedPlace]);
-
-  const placeUpdateSubmitHandler = (e) => {
+  const placeUpdateSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs);
+    await sendRequest(
+      `/api/places/${placeId}`,
+      'PATCH',
+      { 'Content-Type': 'application/json' },
+      JSON.stringify({
+        title: formState.inputs.title.value,
+        description: formState.inputs.description.value,
+      })
+    );
+
+    navigate(`/${userId}/places`);
   };
 
-  if (!identifiedPlace) {
+  if (isLoading) {
+    return (
+      <div className='center'>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!loadedPlace && !error) {
     return (
       <div className='center'>
         <Card>
@@ -104,45 +102,39 @@ const UpdatePlace = () => {
     );
   }
 
-  // Temporary workaround since existingValue & existingValidity
-  // only run once in Input.js initialFormState which uses
-  // fallback state values.
-  if (isLoading) {
-    return (
-      <div>
-        <h2>Loading...</h2>
-      </div>
-    );
-  }
-
   return (
-    <form className='place-form' onSubmit={placeUpdateSubmitHandler}>
-      <Input
-        id='title'
-        element='input'
-        type='text'
-        label='Title'
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText='Please enter a valid title.'
-        onInput={inputHandler}
-        existingValue={formState.inputs.title.value}
-        existingValidity={formState.inputs.title.isValid}
-      />
-      <Input
-        id='description'
-        element='textarea'
-        label='Description'
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errorText='Please enter a minimun of 5 characters.'
-        onInput={inputHandler}
-        existingValue={formState.inputs.description.value}
-        existingValidity={formState.inputs.description.isValid}
-      />
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {loadedPlace && !isLoading && (
+        <form className='place-form' onSubmit={placeUpdateSubmitHandler}>
+          <Input
+            id='title'
+            element='input'
+            type='text'
+            label='Title'
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText='Please enter a valid title.'
+            onInput={inputHandler}
+            existingValue={loadedPlace.title}
+            existingValidity={true}
+          />
+          <Input
+            id='description'
+            element='textarea'
+            label='Description'
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText='Please enter a minimun of 5 characters.'
+            onInput={inputHandler}
+            existingValue={loadedPlace.description}
+            existingValidity={true}
+          />
 
-      <Button type='submit' disabled={!formState.isValid}>
-        UPDATE
-      </Button>
-    </form>
+          <Button type='submit' disabled={!formState.isValid}>
+            UPDATE
+          </Button>
+        </form>
+      )}
+    </>
   );
 };
 
