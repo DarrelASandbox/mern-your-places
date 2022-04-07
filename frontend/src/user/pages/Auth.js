@@ -54,7 +54,7 @@ const Auth = () => {
     const route = isLogin ? 'login' : 'signup';
 
     try {
-      const response = await fetch(`http://localhost:4000/api/users/${route}`, {
+      const response = await fetch(`/api/users/${route}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
