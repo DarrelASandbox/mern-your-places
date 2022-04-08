@@ -67,7 +67,7 @@ const Auth = () => {
           password: formState.inputs.password.value,
         })
       );
-      authContext.loginHandler(userId, token);
+      authContext.login(userId, token);
     } else {
       const formData = new FormData();
       formData.append('email', formState.inputs.email.value);
@@ -80,7 +80,7 @@ const Auth = () => {
         {},
         formData
       );
-      authContext.loginHandler(userId, token);
+      authContext.login(userId, token);
     }
   };
 

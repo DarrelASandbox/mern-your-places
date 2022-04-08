@@ -182,4 +182,36 @@ useEffect(() => {
 
 ![SPA-Authentication](screenshots/SPA-Authentication.png)
 
+> <b>Charles: </b> Is it a best practice to store a JWT in the user's local storage?
+
+> <b>Jost: </b> In his Angular Complete Guide course Max answered to a similar question like this:
+
+> "It's an old discussion - unfortunately with a lot of incomplete information.
+
+> 1. Angular protects you against XSS: By default, unless you deliberately circumvent it, you can't (!) output malicious code with Angular. Angular sanitizes output before it renders it. Of course, there are other possible ways of launching a XSS attack, most notably via a third-party library which got hacked. So let's have a look at 2).
+
+> 2. If your page is vulnerable to XSS, you'll have bigger problems than exposed user session data. Sure, it could be stolen and used but tokens expire after a short duration (typically 1 hour). A cookie would not protect you here, that's a common misconception. Even if it's a httpOnly cookie (which by the way won't allow you to interact with it via Angular - opening up new problems when it comes to managing the user auth state, but that's a different topic).
+
+> Why could you run into issues with a httpOnly cookie? Well, it can't be retrieved via JS (and hence not via a XSS attack) but what is stopping an XSS attacker from simply sending a fetch() request via JS to a server and attach the httpOnly cookie. Nothing, right? An XSS attacker can do whatever you can do with Angular, too.
+
+> So it simply does not matter => You have to protect against XSS and Angular makes that simple. localStorage vs Cookies => It does not matter. localStorage is easier to use, hence we use that.
+
+> Max"
+
+> And in his MEAN stack course Max answered in a similar way:
+
+> "I'm not convinced by the [article](https://dev.to/rdegges/please-stop-using-local-storage-1i04) to be honest. The core essence is: Don't use localStorage because you're vulnerable to XSS. But of course the goal is to protect against XSS and Angular apps are protected by default. Unless you manually overwrite the security model provided by Angular, JS code can't be rendered to the screen, user-created content can't contain JS code (that could be executed).
+
+> I still agree that you shouldn't start storing passwords or credit card data but I don't see an issue with the JWT. You need to store it somewhere because SPAs + API backends don't use session (as the backend is stateless). If you use a cookie, you still need to access it via JS, hence you again have the same XSS issue (=> which shouldn't really exist as mentioned before).
+
+> Last but not least, JWT expire quickly. That's part of their security model. Obviously it's not enough standalone but combined with XSS protection and that you should of course use SSL for your requests, I'm not convinced that localStorage is a bad choice here.
+
+> I read the argument about third-party packages being infiltrated but guess what: If that happened, localStorage is your smallest issue. If the Angular package itself was infiltrated, people can log every input of the user. People can show fake login forms and fetch the real password etc. We're not talking about localStorage security issues then. This is a real problem with all the dependencies of modern frontend apps though. I won't argue against that. But it's a bigger problem we have to be aware of than just about where we store our tokens.
+
+> Max"
+
+&nbsp;
+
+---
+
 &nbsp;

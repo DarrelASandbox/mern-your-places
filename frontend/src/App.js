@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { NewPlace, UpdatePlace, UserPlaces } from './places/pages';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
@@ -9,13 +9,22 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  const loginHandler = useCallback(
-    (uid, token) => {
-      !userId ? setToken(token) : setToken(null);
-      !userId ? setUserId(uid) : setUserId(null);
-    },
-    [userId]
-  );
+  const login = useCallback((uid, token) => {
+    setToken(token);
+    setUserId(uid);
+    localStorage.setItem('userData', JSON.stringify({ uid, token }));
+  }, []);
+
+  const logout = useCallback(() => {
+    setToken(null);
+    setUserId(null);
+    localStorage.removeItem('userData');
+  }, []);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('userData'));
+    if (storedData && storedData.token) login(storedData.uid, storedData.token);
+  }, [login]);
 
   // It's better to use <Navigate to="/" replace />,
   // otherwise a new entry is added to the history and
@@ -44,7 +53,7 @@ const App = () => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: !!token, token, userId, loginHandler }}>
+      value={{ isLoggedIn: !!token, token, userId, login, logout }}>
       <div>
         <BrowserRouter>
           <main>

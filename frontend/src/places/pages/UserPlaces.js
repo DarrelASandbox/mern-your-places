@@ -16,7 +16,7 @@ const UserPlaces = () => {
       setLoadedPlaces(response.userPlaces);
     };
 
-    callSendRequest();
+    if (!!userId) callSendRequest();
   }, [sendRequest, userId]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
