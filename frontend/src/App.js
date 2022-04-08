@@ -1,9 +1,15 @@
+import React, { Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { NewPlace, UpdatePlace, UserPlaces } from './places/pages';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
+import LoadingSpinner from './shared/components/UIElements/LoadingSpinner';
 import AuthContext from './shared/context/auth-context';
 import useAuth from './shared/hooks/auth-hook';
-import { Auth, Users } from './user/pages/';
+
+const Users = React.lazy(() => import('./user/pages/Users'));
+const NewPlace = React.lazy(() => import('./places/pages/NewPlace'));
+const UpdatePlace = React.lazy(() => import('./places/pages/UpdatePlace'));
+const UserPlaces = React.lazy(() => import('./places/pages/UserPlaces'));
+const Auth = React.lazy(() => import('./user/pages/Auth'));
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -40,7 +46,14 @@ const App = () => {
         <BrowserRouter>
           <main>
             <MainNavigation />
-            <Routes>{routes}</Routes>
+            <Suspense
+              fallback={
+                <div className='center'>
+                  <LoadingSpinner />
+                </div>
+              }>
+              <Routes>{routes}</Routes>
+            </Suspense>
           </main>
         </BrowserRouter>
       </div>

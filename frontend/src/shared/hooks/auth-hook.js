@@ -21,7 +21,7 @@ const useAuth = () => {
       JSON.stringify({
         uid,
         token,
-        expiration: tokenExpirationDate.toISOString,
+        expiration: tokenExpirationDate.toISOString(),
       })
     );
   }, []);
