@@ -215,3 +215,14 @@ useEffect(() => {
 ---
 
 &nbsp;
+
+> <b>정성문: </b> shouldn't we set expiration date on the backend?
+> <b>정성문: </b> If we set Exp date of login on the front, isn't it possible for users to modify the exp. date on purpose? (eg. like 10yrs) I thought exp date should be included in the encrypted jwt token we send to the user when logging in.
+
+> <b>Jost: </b> Yes, we could decode the expiration date from the token on the frontend. https://www.udemy.com/course/react-nodejs-express-mongodb-the-mern-fullstack-guide/learn/lecture/16916242#questions/8816256
+
+> But that wouldn't prevent a user from manipulating this in the frontend. The general rule is:
+
+> For security reasons, since you can't protect the frontend against being compromised, you always have to make sure on the server side that a user can only access the content for which he or she is authorized. What we do on client side is just a matter of convenience (not security relevant), for example hiding a button that would cause a request which the server would reject anyways in this situation.
+
+&nbsp;
