@@ -1,61 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { NewPlace, UpdatePlace, UserPlaces } from './places/pages';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import AuthContext from './shared/context/auth-context';
+import useAuth from './shared/hooks/auth-hook';
 import { Auth, Users } from './user/pages/';
 
-let logoutTimer;
-
 const App = () => {
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [tokenExpirationDate, setTokenExpirationDate] = useState();
-
-  const login = useCallback((uid, token, existingExpiration) => {
-    setToken(token);
-    setUserId(uid);
-
-    const tokenExpirationDate =
-      existingExpiration || new Date(new Date().getTime() + 1000 * 60 * 60);
-
-    setTokenExpirationDate(tokenExpirationDate);
-
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({
-        uid,
-        token,
-        expiration: tokenExpirationDate.toISOString,
-      })
-    );
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setTokenExpirationDate(null);
-    setUserId(null);
-    localStorage.removeItem('userData');
-  }, []);
-
-  useEffect(() => {
-    if (token && tokenExpirationDate) {
-      const remainingTime =
-        tokenExpirationDate.getTime() - new Date().getTime();
-
-      logoutTimer = setTimeout(logout, remainingTime);
-    } else clearTimeout(logoutTimer);
-  }, [token, logout, tokenExpirationDate]);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (
-      storedData &&
-      storedData.token &&
-      new Date(storedData.expiration) > new Date()
-    )
-      login(storedData.uid, storedData.token, new Date(storedData.expiration));
-  }, [login]);
+  const { token, login, logout, userId } = useAuth();
 
   // It's better to use <Navigate to="/" replace />,
   // otherwise a new entry is added to the history and
