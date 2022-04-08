@@ -15,7 +15,7 @@ import {
 import './PlaceForm.css';
 
 const UpdatePlace = () => {
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
 
@@ -43,7 +43,7 @@ const UpdatePlace = () => {
     await sendRequest(
       `/api/places/${placeId}`,
       'PATCH',
-      { 'Content-Type': 'application/json' },
+      { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       JSON.stringify({
         title: formState.inputs.title.value,
         description: formState.inputs.description.value,

@@ -19,7 +19,7 @@ const PlaceItem = ({
   onDelete,
   creator,
 }) => {
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [showMap, setShowMap] = useState(false);
@@ -29,7 +29,9 @@ const PlaceItem = ({
   const toggleDeleteModal = () => setShowDeleteModal((prevState) => !prevState);
   const deleteHandler = async () => {
     toggleDeleteModal();
-    await sendRequest(`/api/places/${id}`, 'DELETE');
+    await sendRequest(`/api/places/${id}`, 'DELETE', {
+      Authorization: 'Bearer ' + token,
+    });
     onDelete(id);
   };
 

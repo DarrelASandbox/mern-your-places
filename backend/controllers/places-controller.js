@@ -84,6 +84,8 @@ const updatePlace = async (req, res, next) => {
   try {
     const { title, description } = req.body;
     const updatePlace = await Place.findById(req.params.id);
+    if (updatePlace.creator.toString() !== req.userData.userId)
+      return next(new HttpError('Please authenticate!'));
 
     updatePlace.title = title;
     updatePlace.description = description;
@@ -97,14 +99,15 @@ const updatePlace = async (req, res, next) => {
 };
 
 const deletePlace = async (req, res, next) => {
-  // @TODO: Prevent other user from deleting places not belonging to them.
-
   try {
     const place = await Place.findById(req.params.id).populate(
       'creator',
       '-password'
     );
     if (place.length === 0) return next();
+
+    if (place.creator._id.toString() !== req.userData.userId)
+      return next(new HttpError('Please authenticate!'));
 
     const imagePath = place.image;
 

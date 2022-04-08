@@ -34,7 +34,7 @@ const createUser = async (req, res, next) => {
     places: [],
   });
 
-  const token = jwt.sign({ email: createdUser.email }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ userId: createdUser._id }, process.env.JWT_SECRET, {
     expiresIn: '6 days',
   });
 
@@ -63,11 +63,9 @@ const loginUser = async (req, res, next) => {
     return next(new HttpError('Something went wrong!', 404));
   }
 
-  const token = jwt.sign(
-    { email: existingUser.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '6 days' }
-  );
+  const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_SECRET, {
+    expiresIn: '6 days',
+  });
 
   res.json({ token, userId: existingUser._id });
 };
