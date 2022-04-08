@@ -6,12 +6,12 @@ import AuthContext from './shared/context/auth-context';
 import { Auth, Users } from './user/pages/';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const loginHandler = useCallback(
-    (uid) => {
-      setIsLoggedIn((prevState) => !prevState);
+    (uid, token) => {
+      !userId ? setToken(token) : setToken(null);
       !userId ? setUserId(uid) : setUserId(null);
     },
     [userId]
@@ -21,7 +21,7 @@ const App = () => {
   // otherwise a new entry is added to the history and
   // if you try to navigate back you're redirected again, so you're stuck.
   let routes;
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <>
         <Route path='/' element={<Users />} />
@@ -43,7 +43,8 @@ const App = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userId, loginHandler }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn: !!token, token, userId, loginHandler }}>
       <div>
         <BrowserRouter>
           <main>

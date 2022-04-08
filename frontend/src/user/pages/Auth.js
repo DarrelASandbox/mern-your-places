@@ -58,7 +58,7 @@ const Auth = () => {
     e.preventDefault();
 
     if (isLogin) {
-      const response = await sendRequest(
+      const { userId, token } = await sendRequest(
         '/api/users/login',
         'POST',
         { 'Content-Type': 'application/json' },
@@ -67,22 +67,20 @@ const Auth = () => {
           password: formState.inputs.password.value,
         })
       );
-
-      authContext.loginHandler(response.existingUser._id);
+      authContext.loginHandler(userId, token);
     } else {
       const formData = new FormData();
       formData.append('email', formState.inputs.email.value);
       formData.append('name', formState.inputs.name.value);
       formData.append('password', formState.inputs.password.value);
       formData.append('image', formState.inputs.image.value);
-      const response = await sendRequest(
+      const { userId, token } = await sendRequest(
         '/api/users/signup',
         'POST',
         {},
         formData
       );
-
-      authContext.loginHandler(response.createdUser._id);
+      authContext.loginHandler(userId, token);
     }
   };
 

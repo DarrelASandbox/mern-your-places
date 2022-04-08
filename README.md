@@ -177,3 +177,9 @@ useEffect(() => {
 - [MDN - FormData API](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
 &nbsp;
+
+### Authentication
+
+![SPA-Authentication](screenshots/SPA-Authentication.png)
+
+&nbsp;

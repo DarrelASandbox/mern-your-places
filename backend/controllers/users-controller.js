@@ -1,4 +1,6 @@
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
@@ -22,17 +24,23 @@ const createUser = async (req, res, next) => {
   if (await User.findOne({ email }))
     return next(new HttpError('Email already exists.', 422));
 
+  const hashedPassword = await bcrypt.hash(password, 12);
+
   const createdUser = new User({
     name,
     email,
     avatar: req.file.path,
-    password,
+    password: hashedPassword,
     places: [],
+  });
+
+  const token = jwt.sign({ email: createdUser.email }, process.env.JWT_SECRET, {
+    expiresIn: '6 days',
   });
 
   try {
     await createdUser.save();
-    res.status(201).json({ createdUser });
+    res.status(201).json({ token, userId: createdUser._id });
   } catch (error) {
     console.log(error);
     return next(new HttpError('Failed to create.', 500));
@@ -44,14 +52,24 @@ const loginUser = async (req, res, next) => {
   let existingUser;
   try {
     existingUser = await User.findOne({ email });
-    if (!existingUser || existingUser.password !== password)
+    const isValidPassword = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+    if (!existingUser || !isValidPassword)
       return next(new HttpError('Invalid credentials.', 401));
   } catch (error) {
     console.log(error);
     return next(new HttpError('Something went wrong!', 404));
   }
 
-  res.json({ message: 'Logging in...', existingUser });
+  const token = jwt.sign(
+    { email: existingUser.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '6 days' }
+  );
+
+  res.json({ token, userId: existingUser._id });
 };
 
 module.exports = { getAllUsers, loginUser, createUser };
