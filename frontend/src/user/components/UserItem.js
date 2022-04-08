@@ -24,3 +24,5 @@ const UserItem = ({ id, image, name, placeCount }) => {
   );
 };
 export default UserItem;
+
+// image={`http://localhost:4000/${image}`}

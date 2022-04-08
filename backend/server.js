@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -14,12 +17,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/places', placesRoutes);
+
+app.use(
+  '/backend/uploads/avatars',
+  express.static(path.join(__dirname, 'uploads/avatars'))
+);
 app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
   throw new HttpError('Could not find this route.', 404);
 });
 app.use((err, req, res, next) => {
+  if (req.file) fs.unlink(req.file.path, (error) => console.log(error));
+
   if (res.headerSent) return next(err);
   res
     .status(err.code || 500)
