@@ -16,6 +16,10 @@ require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(
+  '/backend/uploads/images',
+  express.static(path.join(__dirname, 'uploads/images'))
+);
 app.use('/api/places', placesRoutes);
 
 app.use(

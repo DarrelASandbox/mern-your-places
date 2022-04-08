@@ -14,7 +14,9 @@ const fileUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, './backend/uploads/avatars');
+      if (req.route.path === '/signup') cb(null, './backend/uploads/avatars');
+      if (req.route.path === '/' && !!req.body.address)
+        cb(null, './backend/uploads/images');
     },
 
     filename: (req, file, cb) => {

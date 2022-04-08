@@ -9,12 +9,14 @@ const {
   updatePlace,
   deletePlace,
 } = require('../controllers/places-controller');
+const fileUpload = require('../middleware/file-upload');
 
 router.get('/:id', getPlaceById);
 router.get('/user/:id', getPlacesByUserId);
 
 router.post(
   '/',
+  fileUpload.single('image'),
   [
     check('title').trim().not().isEmpty(),
     check('description').trim().isLength({ min: 5 }),
