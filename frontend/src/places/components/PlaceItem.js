@@ -29,9 +29,13 @@ const PlaceItem = ({
   const toggleDeleteModal = () => setShowDeleteModal((prevState) => !prevState);
   const deleteHandler = async () => {
     toggleDeleteModal();
-    await sendRequest(`/api/places/${id}`, 'DELETE', {
-      Authorization: 'Bearer ' + token,
-    });
+    await sendRequest(
+      `${process.env.REACT_APP_BACKEND_URL}/api/places/${id}`,
+      'DELETE',
+      {
+        Authorization: 'Bearer ' + token,
+      }
+    );
     onDelete(id);
   };
 

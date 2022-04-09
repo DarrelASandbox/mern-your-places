@@ -2,7 +2,7 @@
 
 - React, NodeJS, Express & MongoDB - The MERN Fullstack Guide
 - Build fullstack React.js applications with Node.js, Express.js & MongoDB (MERN) with this project-focused course
-- Tutorial for YourPlaces
+- Tutorial for YourPlaces ([Firebase + Heroku Demo](https://your-places-09-apr-2022-2.web.app/))
 - [Maximilian Schwarzmüller](https://github.com/maxschwarzmueller)
 - [Manuel Lorenz](https://academind.com/)
 - [Academind](https://academind.com/)
@@ -237,10 +237,26 @@ useEffect(() => {
 
 - Steps for deploying 2 apps separately using this repo without Git subtree
 - <b>Idea</b>: 3 folders: 1) <code>your-place</code> (GitHub repo) 2) <code>backend</code> (Heroku) <code>frontend (Firebase)
+
   - Duplicate both <code>frontend and <code>backend</code> folders repectively.
   - Copy over the files (e.g. package.json) from root directory (<code>your-place</code> folder) to the newly created <code>backend</code> folder.
   - Deploy <code>backend</code> folder to heroku.
-  - Deploy <code>frontend</code> folder. Refer to commands below before deploying.
+
+    - Use the code below to fix the path for images & avatar:
+
+    ```js
+    // Replace './backend/uploads/images'
+    // Replace './backend/uploads/avatar'
+
+    './uploads/images';
+    './uploads/avatar';
+
+    // Append image: 'backend/' + req.file.path & "avatar: req.file.path" as below
+    image: 'backend/' + req.file.path,
+    avatar: 'backend/' + req.file.path,
+    ```
+
+  - Deploy <code>frontend</code> folder. Refer to commands below for testing before deploying.
     ```sh
     npm run build
     npx serve build
