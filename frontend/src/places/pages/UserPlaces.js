@@ -12,7 +12,9 @@ const UserPlaces = () => {
 
   useEffect(() => {
     const callSendRequest = async () => {
-      const response = await sendRequest(`/api/places/user/${userId}`);
+      const response = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/api/places/user/${userId}`
+      );
       setLoadedPlaces(response.userPlaces);
     };
 

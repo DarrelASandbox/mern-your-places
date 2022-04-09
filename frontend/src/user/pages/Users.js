@@ -10,7 +10,9 @@ const Users = () => {
 
   useEffect(() => {
     const callSendRequest = async () => {
-      const response = await sendRequest('/api/users');
+      const response = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users`
+      );
       setLoadedUsers(response.users);
     };
 

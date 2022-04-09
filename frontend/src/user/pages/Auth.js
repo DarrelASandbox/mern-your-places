@@ -59,7 +59,7 @@ const Auth = () => {
 
     if (isLogin) {
       const { userId, token } = await sendRequest(
-        '/api/users/login',
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/login`,
         'POST',
         { 'Content-Type': 'application/json' },
         JSON.stringify({
@@ -75,7 +75,7 @@ const Auth = () => {
       formData.append('password', formState.inputs.password.value);
       formData.append('image', formState.inputs.image.value);
       const { userId, token } = await sendRequest(
-        '/api/users/signup',
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/signup`,
         'POST',
         {},
         formData

@@ -32,7 +32,9 @@ const UpdatePlace = () => {
 
   useEffect(() => {
     const callSendRequest = async () => {
-      const response = await sendRequest(`/api/places/${placeId}`);
+      const response = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/api/places/${placeId}`
+      );
       setLoadedPlace(response.place);
     };
     callSendRequest();
@@ -41,7 +43,7 @@ const UpdatePlace = () => {
   const placeUpdateSubmitHandler = async (e) => {
     e.preventDefault();
     await sendRequest(
-      `/api/places/${placeId}`,
+      `${process.env.REACT_APP_BACKEND_URL}/api/places/${placeId}`,
       'PATCH',
       { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       JSON.stringify({

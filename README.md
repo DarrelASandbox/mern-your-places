@@ -226,3 +226,24 @@ useEffect(() => {
 > For security reasons, since you can't protect the frontend against being compromised, you always have to make sure on the server side that a user can only access the content for which he or she is authorized. What we do on client side is just a matter of convenience (not security relevant), for example hiding a button that would cause a request which the server would reject anyways in this situation.
 
 &nbsp;
+
+---
+
+&nbsp;
+
+### Deployment
+
+![deployment-2-options](screenshots/deployment-2-options.png)
+
+- Steps for deploying 2 apps separately using this repo without Git subtree
+- <b>Idea</b>: 3 folders: 1) <code>your-place</code> (GitHub repo) 2) <code>backend</code> (Heroku) <code>frontend (Firebase)
+  - Duplicate both <code>frontend and <code>backend</code> folders repectively.
+  - Copy over the files (e.g. package.json) from root directory (<code>your-place</code> folder) to the newly created <code>backend</code> folder.
+  - Deploy <code>backend</code> folder to heroku.
+  - Deploy <code>frontend</code> folder. Refer to commands below before deploying.
+    ```sh
+    npm run build
+    npx serve build
+    ```
+
+&nbsp;
