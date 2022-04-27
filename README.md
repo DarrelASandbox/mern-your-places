@@ -236,9 +236,9 @@ useEffect(() => {
 ![deployment-2-options](screenshots/deployment-2-options.png)
 
 - Steps for deploying 2 apps separately using this repo without Git subtree
-- <b>Idea</b>: 3 folders: 1) <code>your-place</code> (GitHub repo) 2) <code>backend</code> (Heroku) <code>frontend (Firebase)
+- <b>Idea</b>: 3 folders: 1) <code>your-place</code> (GitHub repo) 2) <code>backend</code> (Heroku) <code>frontend (Firebase)</code>
 
-  - Duplicate both <code>frontend and <code>backend</code> folders repectively.
+  - Duplicate both <code>frontend</code> and <code>backend</code> folders repectively.
   - Copy over the files (e.g. package.json) from root directory (<code>your-place</code> folder) to the newly created <code>backend</code> folder.
   - Deploy <code>backend</code> folder to heroku.
 
